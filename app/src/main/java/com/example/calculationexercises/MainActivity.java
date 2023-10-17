@@ -1,10 +1,12 @@
 package com.example.calculationexercises;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,8 +14,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import utils.Kattio;
 import utils.Pair;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +38,13 @@ public class MainActivity extends AppCompatActivity {
     SQLiteOpenHelper helper;
     SQLiteDatabase db;
     int addMaxID, subMaxID, mulMaxID, divMaxID, complexMaxID;
+    Kattio kio;
+    String path = null;
+    CheckBox add = null;
+    CheckBox sub = null;
+    CheckBox mul = null;
+    CheckBox div = null;
+    CheckBox complex = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,15 +54,24 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
         initDB();
+        path = mainActivity.getFilesDir().getPath().toString()+"/CalculationExercise";
+        Log.e("Init", "当前路径：" + path);
 
-        CheckBox add = findViewById(R.id.addExercise);
-        CheckBox sub = findViewById(R.id.subExercise);
-        CheckBox mul = findViewById(R.id.mulExercise);
-        CheckBox div = findViewById(R.id.divExercise);
-        CheckBox complex = findViewById(R.id.complexExercise);
+        AlertDialog.Builder al = new AlertDialog.Builder(mainActivity);
+        al.setTitle("题库更新完成")
+                .setMessage("已下载" + ExerciseSQLiteOpenHelper.cnt + "道题")
+                .create()
+                .show();
+
+        add = findViewById(R.id.addExercise);
+        sub = findViewById(R.id.subExercise);
+        mul = findViewById(R.id.mulExercise);
+        div = findViewById(R.id.divExercise);
+        complex = findViewById(R.id.complexExercise);
         Button apply = findViewById(R.id.apply);
         Button reset = findViewById(R.id.reset);
-        thisAnswer = nextQuestion(MUL);
+//        thisAnswer = nextQuestion(MUL);
+        thisAnswer = returnBack();
         complex.setVisibility(View.INVISIBLE);
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 Random rand = new Random();
                 if(!checkAnswer(thisAnswer))
                     return;
+                // /data/user/0/com.example.calculationexercises/files/CalculationExercise
                 thisAnswer = nextQuestion(checked.get(rand.nextInt(checked.size())));
             }
         });
@@ -203,23 +224,159 @@ public class MainActivity extends AppCompatActivity {
             nextQuestion = cursor.getString(cursor.getColumnIndexOrThrow("question"));
         }
 
+        try {
+            kio = new Kattio(System.in, new FileOutputStream(path));
+        } catch (FileNotFoundException e) {
+            try {
+                new File(path).createNewFile();
+                kio = new Kattio(System.in, new FileOutputStream(path));
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        kio.println(add.isChecked());
+        kio.println(sub.isChecked());
+        kio.println(mul.isChecked());
+        kio.println(div.isChecked());
+        kio.println(complex.isChecked());
+        kio.println(qKind);
+        kio.println(selID);
+        kio.println(ans);
         switch (qKind){
             case ADD:
                 QuestionAndAnswer.question.setText(firstNum + "+" + secondNum + "=");
+                kio.close();
                 return new Pair<>(ans, null);
             case SUB:
                 QuestionAndAnswer.question.setText(firstNum + "-" + secondNum + "=");
+                kio.close();
                 return new Pair<>(ans, null);
             case MUL:
                 QuestionAndAnswer.question.setText(firstNum + "×" + secondNum + "=");
+                kio.close();
                 return new Pair<>(ans, null);
             case DIV:
                 QuestionAndAnswer.question.setText(firstNum + "÷" + secondNum + "=");
+                kio.println(mod);
+                kio.close();
                 return new Pair<>(ans, mod);
             case COMPLEX:
                 //todo 要改
                 break;
         }
+        return null;
+    }
+
+    private Pair<Integer, Integer> returnBack() {
+        // 初始化界面
+        QuestionAndAnswer.modPoint.setVisibility(View.INVISIBLE);
+        QuestionAndAnswer.mod.setVisibility(View.INVISIBLE);
+
+        try {
+            kio = new Kattio(new FileInputStream(path), System.out);
+        } catch (FileNotFoundException e) {
+            try {
+                new File(path).createNewFile();
+                kio = new Kattio(new FileInputStream(path), System.out);
+            } catch (Exception ex) {
+                thisAnswer = nextQuestion(MUL);
+                return thisAnswer;
+            }
+        }
+        int qKind = 0;
+        int selID = 0;
+        try {
+            add.setChecked(kio.next().equals("true"));
+            sub.setChecked(kio.next().equals("true"));
+            mul.setChecked(kio.next().equals("true"));
+            div.setChecked(kio.next().equals("true"));
+            complex.setChecked(kio.next().equals("true"));
+            qKind = kio.nextInt();
+            selID = kio.nextInt();
+            int ans = kio.nextInt();
+            Integer mod = null;
+            if (qKind == DIV) mod = kio.nextInt();
+        } catch (Exception e) {
+            thisAnswer = nextQuestion(MUL);
+            return thisAnswer;
+        }
+        kio.close();
+        String table = "";
+        switch (qKind) {
+            case ADD:
+                table = "AddExercise";
+                break;
+            case SUB:
+                table = "SubtractExercise";
+                break;
+            case MUL:
+                table = "MultiplyExercise";
+                break;
+            case DIV:
+                QuestionAndAnswer.modPoint.setVisibility(View.VISIBLE);
+                QuestionAndAnswer.mod.setVisibility(View.VISIBLE);
+                table = "DivisionExercise";
+                break;
+            case COMPLEX:
+                //todo 综合题，暂时没做
+                break;
+        }
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table + " WHERE _id == " + selID, null);
+        cursor.moveToNext();
+        int firstNum = 0, secondNum = 0, ans = 0, mod = 0;
+        String nextQuestion;
+        if (qKind != COMPLEX) {
+            firstNum = cursor.getInt(cursor.getColumnIndexOrThrow("firstNum"));
+            secondNum = cursor.getInt(cursor.getColumnIndexOrThrow("secondNum"));
+            ans = cursor.getInt(cursor.getColumnIndexOrThrow("ans"));
+            if (qKind == DIV)
+                mod = cursor.getInt(cursor.getColumnIndexOrThrow("mod"));
+        } else {
+            nextQuestion = cursor.getString(cursor.getColumnIndexOrThrow("question"));
+        }
+        try {
+            kio = new Kattio(System.in, new FileOutputStream(path));
+        } catch (FileNotFoundException e) {
+            try {
+                new File(path).createNewFile();
+                kio = new Kattio(System.in, new FileOutputStream(path));
+            } catch (Exception ex) {
+                thisAnswer = nextQuestion(MUL);
+                return thisAnswer;
+            }
+        }
+        kio.println(add.isChecked());
+        kio.println(sub.isChecked());
+        kio.println(mul.isChecked());
+        kio.println(div.isChecked());
+        kio.println(complex.isChecked());
+        kio.println(qKind);
+        kio.println(selID);
+        kio.println(ans);
+        switch (qKind){
+            case ADD:
+                QuestionAndAnswer.question.setText(firstNum + "+" + secondNum + "=");
+                kio.close();
+                return new Pair<>(ans, null);
+            case SUB:
+                QuestionAndAnswer.question.setText(firstNum + "-" + secondNum + "=");
+                kio.close();
+                return new Pair<>(ans, null);
+            case MUL:
+                QuestionAndAnswer.question.setText(firstNum + "×" + secondNum + "=");
+                kio.close();
+                return new Pair<>(ans, null);
+            case DIV:
+                QuestionAndAnswer.question.setText(firstNum + "÷" + secondNum + "=");
+                kio.println(mod);
+                kio.close();
+                return new Pair<>(ans, mod);
+            case COMPLEX:
+                //todo 要改
+                break;
+        }
+        kio.close();
         return null;
     }
 }

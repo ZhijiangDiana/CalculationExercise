@@ -13,6 +13,7 @@ import java.sql.*;
 import static com.example.calculationexercises.MainActivity.mainActivity;
 
 public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
+    public static int cnt = 0;
     private static SQLiteOpenHelper Instance;
     public static synchronized SQLiteOpenHelper getInstance(Context context){
         if(Instance == null)
@@ -63,6 +64,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
                 int ans = rs.getInt("ans");
                 db.execSQL("INSERT INTO AddExercise(firstNum, secondNum, ans) VALUES ('"+firstNum+"' ,'"+secondNum+"','"+ans+"')");
                 Log.e("SQLiteInit", firstNum+"+"+secondNum+"="+ans);
+                cnt++;
             }
             rs.close();
             // 减法
@@ -73,6 +75,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
                 int ans = rs.getInt("ans");
                 db.execSQL("INSERT INTO SubtractExercise(firstNum, secondNum, ans) VALUES ('"+firstNum+"' ,'"+secondNum+"','"+ans+"')");
                 Log.e("SQLiteInit", firstNum+"-"+secondNum+"="+ans);
+                cnt++;
             }
             rs.close();
             // 乘法
@@ -83,6 +86,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
                 int ans = rs.getInt("ans");
                 db.execSQL("INSERT INTO MultiplyExercise(firstNum, secondNum, ans) VALUES ('"+firstNum+"' ,'"+secondNum+"','"+ans+"')");
                 Log.e("SQLiteInit", firstNum+"*"+secondNum+"="+ans);
+                cnt++;
             }
             rs.close();
             // 除法
@@ -94,6 +98,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
                 int mod = rs.getInt("mod");
                 db.execSQL("INSERT INTO DivisionExercise(firstNum, secondNum, ans, mod) VALUES ('"+firstNum+"' ,'"+secondNum+"','"+ans+"','"+mod+"')");
                 Log.e("SQLiteInit", firstNum+"/"+secondNum+"="+ans+"······"+mod);
+                cnt++;
             }
             rs.close();
 //            // 综合运算
@@ -107,6 +112,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
 //            }
 //            rs.close();
         } catch (SQLException e) {
+            //todo 未知问题，在这里写弹窗就一闪而过
 //            e.printStackTrace();
 //            AlertDialog.Builder al = new AlertDialog.Builder(mainActivity);
 //            al.setTitle("连接远程数据库出错，请检查互联网");
