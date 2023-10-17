@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="206dp" android:id="@+id/midLine"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="41dp" android:id="@+id/horiLine1"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="114dp" android:id="@+id/horiLine2"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="168dp" android:id="@+id/horiLine3"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="222dp" android:id="@+id/horiLine4"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="276dp" android:id="@+id/horiLine5"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" app:layout_constraintGuide_begin="583dp" android:id="@+id/horiLine6"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:text="计算练习"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@id/horiLine2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/horiLine1"/>
+    <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/addExercise"
+              android:text="加法练习"
+              android:textSize="20sp"
+              app:layout_constraintBottom_toBottomOf="@id/horiLine3"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="@id/midLine"
+              app:layout_constraintTop_toTopOf="@id/horiLine2">
+    </CheckBox>
+    <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/subExercise"
+              android:text="减法练习"
+              android:textSize="20sp"
+              app:layout_constraintBottom_toBottomOf="@id/horiLine3"
+              app:layout_constraintStart_toStartOf="@id/midLine"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="@id/horiLine2">
+    </CheckBox>
+    <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/mulExercise"
+              android:text="乘法练习"
+              android:textSize="20sp"
+              app:layout_constraintBottom_toBottomOf="@id/horiLine4"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="@id/midLine"
+              app:layout_constraintTop_toTopOf="@id/horiLine3"
+              android:checked="true">
+    </CheckBox>
+    <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/divExercise"
+              android:text="除法练习"
+              android:textSize="20sp"
+              app:layout_constraintBottom_toBottomOf="@id/horiLine4"
+              app:layout_constraintStart_toStartOf="@id/midLine"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="@id/horiLine3">
+    </CheckBox>
+    <CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/complexExercise"
+              android:text="综合计算练习"
+              android:textSize="20sp"
+              app:layout_constraintBottom_toBottomOf="@id/horiLine5"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="@id/horiLine4">
+    </CheckBox>
+    <com.example.calculationexercises.QuestionAndAnswer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/horiLine6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/horiLine5">
+    </com.example.calculationexercises.QuestionAndAnswer>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reset"
+        android:text="清空答案"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/midLine"
+        app:layout_constraintTop_toTopOf="@id/horiLine6">
+    </Button>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/apply"
+        android:text="提交答案"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/midLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/horiLine6">
+    </Button>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
