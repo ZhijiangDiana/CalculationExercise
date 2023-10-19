@@ -53,7 +53,7 @@ public class ExerciseSQLiteOpenHelper extends SQLiteOpenHelper {
 
 
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://1.15.179.230:3306/Calculation_Exercise?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC", "root", "114514");
+            conn = DriverManager.getConnection("jdbc:mysql:///Calculation_Exercise?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC", "", "");
             stmt = conn.createStatement();
             // 加法
             rs = stmt.executeQuery("SELECT * FROM AddExercise");
